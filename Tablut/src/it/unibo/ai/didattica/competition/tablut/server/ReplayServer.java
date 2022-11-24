@@ -112,13 +112,16 @@ public class ReplayServer extends Server {
 	}
 
 	protected State getStateFromLines(List<String> lines, State.Turn turn) {
-		State state;
+		State state= new StateTablut();
 		switch (this.gameC) {
-			case 1, 2, 4 -> state = new StateTablut();
-			case 3 -> state = new StateBrandub();
-			default -> throw new IllegalStateException("Wrong gameC somehow!");
+			case 1: state = new StateTablut();
+			case 2: state = new StateTablut();
+			case 4: state = new StateTablut();
+			case 3 : state = new StateBrandub();
+			default : break;//throw new IllegalStateException("Wrong gameC somehow!");
 		}
-		State.Pawn[][] board = state.getBoard();
+		// unreachable code
+        State.Pawn[][] board = state.getBoard();
 
 		if (lines.size() != 9)
 			throw new IllegalArgumentException(String.format("Wrong number of lines: was %d, expected 9", lines.size()));
@@ -129,8 +132,9 @@ public class ReplayServer extends Server {
 				throw new IllegalArgumentException(String.format("Wrong line length at line %d: was %d, expected 9", i, line.length()));
 			for (int j = 0; j < line.length(); j++) {
 				String pawnChar = "" + line.charAt(j);
-
-				State.Pawn pawn = State.Pawn.fromString(pawnChar);
+				State.Pawn pawn = Arrays.stream(State.Pawn.values())
+						.filter(p -> p.toString().equals(pawnChar))
+						.findAny().get();
 				board[i][j] = pawn;
 			}
 		}
